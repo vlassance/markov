@@ -47,8 +47,9 @@ function drawChartLine(dados, colunas, id_div) {
 
   // Set chart options
   var options = {
-                 'width':800,
-                 'height':300
+                 'height': 500,
+                 'width' : 680,
+                 'vAxis': {maxValue: 1, minValue: 0}
                 };
 
   // Instantiate and draw our chart, passing in some options.

@@ -40,9 +40,9 @@ class MarcovController < ApplicationController
           tempo += delta_t
         end
 
+        @string_dados = @string_dados.slice(0, @string_dados.length - 2)
         @string_dados += "]"
 
-        puts "CONFIBILIDADE #{confiabilidade.inspect}"
       elsif params[:filtros][:modelo] == "Disponibilidade"
         p[3] = [mi_c*delta_t, 0, 0, (1-mi_c*delta_t)]
 
