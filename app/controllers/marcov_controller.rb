@@ -6,7 +6,7 @@ class MarcovController < ApplicationController
       lambda = 1/(params[:filtros][:mttf].to_f)
       mi_c = 1/(params[:filtros][:mttrc].to_f)
       mi_p = 1/((params[:filtros][:mttrp].to_f)*30*24)
-      fator_de_cobertura = params[:filtros][:cobetura].to_f
+      fator_de_cobertura = params[:filtros][:cobertura].to_f
       delta_t = params[:filtros][:deltat].to_f
       periodo = (params[:filtros][:periodo].to_f)*360*24
 
@@ -19,34 +19,30 @@ class MarcovController < ApplicationController
 
       if params[:filtros][:modelo] == "Confiabilidade"
         p[3] = [0, 0, 0, 1]
-
-        puts "P - #{p.inspect}"
-
-        confiabilidade = Array.new
-        confiabilidade[0] = 1
-        pi_atual = pi_zero
-
-        i = 1
-        tempo = delta_t
-        @string_dados = "["
-
-        while tempo < periodo
-          pi_atual = calcula_proximo_pi(pi_atual, p)
-          confiabilidade[i] = 1 - pi_atual[3]
-
-          @string_dados += "[#{tempo}, #{confiabilidade[i]}], "
-
-          i += 1
-          tempo += delta_t
-        end
-
-        @string_dados = @string_dados.slice(0, @string_dados.length - 2)
-        @string_dados += "]"
-
+        @modelo = "Conf."
       elsif params[:filtros][:modelo] == "Disponibilidade"
         p[3] = [mi_c*delta_t, 0, 0, (1-mi_c*delta_t)]
-
+        @modelo = "Disp."
       end
+
+      puts "P - #{p.inspect}"
+
+      pi_atual = pi_zero
+
+      tempo = delta_t
+      @string_dados = "[[0, 1], "
+
+      while tempo < periodo
+        pi_atual = calcula_proximo_pi(pi_atual, p)
+
+        @string_dados += "[#{tempo}, #{(1 - pi_atual[3])}], "
+
+        tempo += delta_t
+      end
+
+      @string_dados = @string_dados.slice(0, @string_dados.length - 2)
+      @string_dados += "]"
+
     end 
   end
 

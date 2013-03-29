@@ -1,13 +1,13 @@
 <div class="row">
   <div class="span12">
-    <h1>Simulação Cadeia de Markov - TMR</h1>
+    <h2>Simulação Cadeia de Markov - TMR</h2>
     
     <div class="row">
       <div class="span2 well">
         <div class="row">
           <%= simple_form_for :filtros, :url => "/marcov/home", :html => {:class => 'span2 form-vertical filtro_relatorio'} do |f| %>
-            <%= f.input :modelo, :required => false, :collection => ["Disponibilidade", "Confiabilidade"], :label => "Modelo", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
-            <%= f.input :cobertura, :required => false, :label => "Cobertura (C) - ex: 0.8", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
+            <%= f.input :modelo, :required => false, :collection => ["Disponibilidade", "Confiabilidade"], :label => "Modelo", :input_html => {:class => 'span2'}, :prompt => "Selecione", :wrapper_html => {:class => ''} %>
+            <%= f.input :cobertura, :required => false, :label => "Cobertura (C)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
             <%= f.input :mttf, :required => false, :label => "MTTF (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
             <%= f.input :mttrc, :required => false, :label => "MTTRc (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
             <%= f.input :mttrp, :required => false, :label => "MTTRp (meses)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
@@ -19,7 +19,7 @@
         </div>
       </div>
       
-      <div class="chart span9" id="chart_div">asfasdfsd</div>
+      <div class="chart span9" id="chart_div"></div>
     </div>
     
     
