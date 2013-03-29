@@ -17,14 +17,20 @@
  
 $(document).ready(function(){
    $(".filtro_relatorio").submit(function(){
-     $.ajax({
+
+      $(".chart").toggle();
+      $(".loading").toggle();
+      $.ajax({
         type: 'GET',
         url: $(this).attr("action"),
         data: $(this).serialize(),
         success: function(data){
+          $(".loading").toggle();
+          $(".chart").toggle();
         },
         dataType: "script"
       });
+
 
       return false;
   });
