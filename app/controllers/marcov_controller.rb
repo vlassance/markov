@@ -32,16 +32,35 @@ class MarcovController < ApplicationController
       tempo = delta_t
       @string_dados = "[[0, 1], "
 
+      if periodo < 1*360*24
+        intervalo_de_plotagem = 1
+        puts "<1  - intervalo = #{intervalo_de_plotagem}"
+      elsif periodo < 10*360*24
+        intervalo_de_plotagem = 24
+        puts "<10  - intervalo = #{intervalo_de_plotagem}"
+      elsif periodo < 100*360*24
+        intervalo_de_plotagem = 24*30
+        puts "<100  - intervalo = #{intervalo_de_plotagem}"
+      elsif periodo < 1000*360*24
+        intervalo_de_plotagem = 24*30*6
+        puts "<1000  - intervalo = #{intervalo_de_plotagem}"
+      else
+        intervalo_de_plotagem = 24*30*12
+        puts ">=1000 - intervalo = #{intervalo_de_plotagem}"
+      end
+
+      i = 0
       while tempo < periodo
         pi_atual = calcula_proximo_pi(pi_atual, p)
 
-        @string_dados += "[#{tempo}, #{(1 - pi_atual[3])}], "
+        @string_dados << "[#{tempo}, #{(1 - pi_atual[3])}], " if i%intervalo_de_plotagem == 0
 
         tempo += delta_t
+        i += 1
       end
 
       @string_dados = @string_dados.slice(0, @string_dados.length - 2)
-      @string_dados += "]"
+      @string_dados << "]"
 
     end 
   end
