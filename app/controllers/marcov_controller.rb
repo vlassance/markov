@@ -1,84 +1,73 @@
+require 'matrix'
+
 class MarcovController < ApplicationController
   def home
     puts "PARAMS #{params}"
 
     unless params[:filtros].nil?
       lambda = 1/(params[:filtros][:mttf].to_f)
-      mi_c = 0
-      mi_p = 0
+      c = params[:filtros][:cobertura].to_f
+      dt = params[:filtros][:deltat].to_f
+      t = (params[:filtros][:T].to_f)*360*24
+
+      uc = 1/(params[:filtros][:mttrc].to_f)
+      uc_fault = 0
+      uc_failure = 0
       if params[:filtros][:manutencao] == "Sim"
-        mi_c = 1/(params[:filtros][:mttrc].to_f) 
-        mi_p = 1/((params[:filtros][:mttrp].to_f)*30*24)
+        uc_fault = uc 
       end
-      fator_de_cobertura = params[:filtros][:cobertura].to_f
-      delta_t = params[:filtros][:deltat].to_f
-      periodo = (params[:filtros][:periodo].to_f)*360*24
-
-      pi_zero = [1, 0, 0, 0]
-
-      p = Array.new
-      p[0] = [(1-3*lambda*delta_t), (3*lambda*delta_t*fator_de_cobertura), (3*lambda*delta_t*(1-fator_de_cobertura)), 0]
-      p[1] = [(mi_c*delta_t), (1-2*lambda*delta_t-mi_c*delta_t), 0, 2*lambda*delta_t]
-      p[2] = [mi_p*delta_t, 0, (1-2*lambda*delta_t-mi_p*delta_t), 2*lambda*delta_t]
-
       if params[:filtros][:modelo] == "Confiabilidade"
-        p[3] = [0, 0, 0, 1]
-        @modelo = "Conf."
+        @modelo = "Conf. (R)"
       elsif params[:filtros][:modelo] == "Disponibilidade"
-        mi_c = 1/(params[:filtros][:mttrc].to_f)
-        p[3] = [mi_c*delta_t, 0, 0, (1-mi_c*delta_t)]
-        @modelo = "Disp."
+        uc_failure = uc
+        @modelo = "Disp. (A)"
       end
+
+      pi_zero = Matrix.row_vector([1, 0, 0])
+
+      rows = Array.new
+      rows[0] = [1-2*lambda*dt, 2*lambda*dt*c, 2*lambda*dt*(1-c)]
+      rows[1] = [uc_fault*dt, 1-lambda*dt-uc_fault*dt, lambda*dt]
+      rows[2] = [uc_failure*dt, 0, 1-uc_failure*dt]
+      
+      p = Matrix.rows(rows)
 
       puts "P - #{p.inspect}"
 
       pi_atual = pi_zero
 
-      tempo = delta_t
-      @string_dados = "[[0, 1], "
+      tempo = dt
+      @string_dados = "[[0, 1]"
 
-      if periodo < 1*360*24
-        intervalo_de_plotagem = 1
+      if t < 1*360*24 # se o intervalo for menor que 1 ano
+        intervalo_de_plotagem = 1 # dt é em horas
         puts "<1  - intervalo = #{intervalo_de_plotagem}"
-      elsif periodo < 10*360*24
-        intervalo_de_plotagem = 24
+      elsif t < 10*360*24 # se o intervalo for entre 1 e 10 anos
+        intervalo_de_plotagem = 24 # dt é em dias
         puts "<10  - intervalo = #{intervalo_de_plotagem}"
-      elsif periodo < 100*360*24
-        intervalo_de_plotagem = 24*30
+      elsif t < 100*360*24 # se o intervalo for entre 10 e 100 anos
+        intervalo_de_plotagem = 24*30 # dt é em meses
         puts "<100  - intervalo = #{intervalo_de_plotagem}"
-      elsif periodo < 1000*360*24
-        intervalo_de_plotagem = 24*30*6
+      elsif t < 1000*360*24 # se o intervalo for entre 100 e mil anos
+        intervalo_de_plotagem = 24*30*6 # dt é em semestres
         puts "<1000  - intervalo = #{intervalo_de_plotagem}"
-      else
-        intervalo_de_plotagem = 24*30*12
+      else # se o intervalo for maior que mil anos
+        intervalo_de_plotagem = 24*30*12 # dt é em anos
         puts ">=1000 - intervalo = #{intervalo_de_plotagem}"
       end
 
       i = 0
-      while tempo < periodo
-        pi_atual = calcula_proximo_pi(pi_atual, p)
-
-        @string_dados << "[#{tempo}, #{(1 - pi_atual[3])}], " if i%intervalo_de_plotagem == 0
-
-        tempo += delta_t
+      while tempo < t
+        pi_atual = pi_atual * p
+        @string_dados << ", [#{tempo}, #{(1 - pi_atual[3])}]" if i % intervalo_de_plotagem == 0
+        tempo += dt
         i += 1
       end
 
-      @string_dados = @string_dados.slice(0, @string_dados.length - 2)
       @string_dados << "]"
+      puts "num. de iterações: #{i}"
 
     end 
   end
 
-  private
-  def calcula_proximo_pi(pi_atual, p)
-    proximo_pi = Array.new
-
-    proximo_pi[0] = p[0][0]*pi_atual[0] + p[1][0]*pi_atual[1] + p[2][0]*pi_atual[2] + p[3][0]*pi_atual[3]
-    proximo_pi[1] = p[0][1]*pi_atual[0] + p[1][1]*pi_atual[1] + p[2][1]*pi_atual[2] + p[3][1]*pi_atual[3]
-    proximo_pi[2] = p[0][2]*pi_atual[0] + p[1][2]*pi_atual[1] + p[2][2]*pi_atual[2] + p[3][2]*pi_atual[3]
-    proximo_pi[3] = p[0][3]*pi_atual[0] + p[1][3]*pi_atual[1] + p[2][3]*pi_atual[2] + p[3][3]*pi_atual[3]
-
-    proximo_pi
-  end
 end
