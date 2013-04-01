@@ -4,8 +4,12 @@ class MarcovController < ApplicationController
 
     unless params[:filtros].nil?
       lambda = 1/(params[:filtros][:mttf].to_f)
-      mi_c = 1/(params[:filtros][:mttrc].to_f)
-      mi_p = 1/((params[:filtros][:mttrp].to_f)*30*24)
+      mi_c = 0
+      mi_p = 0
+      if params[:filtros][:manutencao] == "Sim"
+        mi_c = 1/(params[:filtros][:mttrc].to_f) 
+        mi_p = 1/((params[:filtros][:mttrp].to_f)*30*24)
+      end
       fator_de_cobertura = params[:filtros][:cobertura].to_f
       delta_t = params[:filtros][:deltat].to_f
       periodo = (params[:filtros][:periodo].to_f)*360*24
@@ -21,6 +25,7 @@ class MarcovController < ApplicationController
         p[3] = [0, 0, 0, 1]
         @modelo = "Conf."
       elsif params[:filtros][:modelo] == "Disponibilidade"
+        mi_c = 1/(params[:filtros][:mttrc].to_f)
         p[3] = [mi_c*delta_t, 0, 0, (1-mi_c*delta_t)]
         @modelo = "Disp."
       end

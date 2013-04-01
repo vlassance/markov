@@ -7,6 +7,7 @@
         <div class="row">
           <%= simple_form_for :filtros, :url => "/marcov/home", :html => {:class => 'span2 form-vertical filtro_relatorio'} do |f| %>
             <%= f.input :modelo, :required => false, :collection => ["Disponibilidade", "Confiabilidade"], :label => "Modelo", :input_html => {:class => 'span2'}, :prompt => "Selecione", :wrapper_html => {:class => ''} %>
+            <%= f.input :manutencao, :required => false, :collection => ["Sim", "Não"], :label => "Manutenção de Fault", :input_html => {:class => 'span2'}, :prompt => "Selecione", :wrapper_html => {:class => ''} %>
             <%= f.input :cobertura, :required => false, :label => "Cobertura (C)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
             <%= f.input :mttf, :required => false, :label => "MTTF (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
             <%= f.input :mttrc, :required => false, :label => "MTTRc (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
