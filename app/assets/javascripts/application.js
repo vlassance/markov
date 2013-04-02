@@ -20,6 +20,7 @@ $(document).ready(function(){
 
       $(".chart").toggle();
       $(".loading").toggle();
+	  $(".numit").toggle();
       $.ajax({
         type: 'GET',
         url: $(this).attr("action"),
@@ -27,6 +28,7 @@ $(document).ready(function(){
         success: function(data){
           $(".loading").toggle();
           $(".chart").toggle();
+		  $(".numit").toggle();
         },
         dataType: "script"
       });
@@ -40,7 +42,7 @@ $(document).ready(function(){
 google.load('visualization', '1.0', {'packages':['corechart']});
 
 
-function drawChartLine(dados, colunas, id_div) {
+function drawChartLine(title_graph, dados, colunas, id_div, numit) {
 
   // Create the data table.
   var data = new google.visualization.DataTable();
@@ -55,12 +57,16 @@ function drawChartLine(dados, colunas, id_div) {
   var options = {
                  'height': 500,
                  'width' : 680,
-                 'vAxis': {maxValue: 1, minValue: 0}
+				 'hAxis': {title: colunas[0][1]},
+                 'vAxis': {title: colunas[1][1], maxValue: 1},
+				 title: title_graph,
+				 legend: 'none'
                 };
 
   // Instantiate and draw our chart, passing in some options.
   var chart = new google.visualization.LineChart(document.getElementById(id_div));
   chart.draw(data, options);
+  $(".numit").text(numit);
 }
 
 function drawChartPie(slice_name_label, slice_value_label, dados, chart_div) {

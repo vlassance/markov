@@ -4,28 +4,30 @@
 	<h3>Exercicio 20 - 2 módulos redundantes paralelos</h3>
     
     <div class="row">
-      <div class="span2 well">
+      <div class="span5 well">
         <div class="row">
-          <%= simple_form_for :filtros, :url => "/marcov/home", :html => {:class => 'span2 form-vertical filtro_relatorio'} do |f| %>
-            <%= f.input :modelo, :required => false, :collection => ["Disponibilidade", "Confiabilidade"], :label => "Modelo", :input_html => {:class => 'span2'}, :prompt => "Selecione", :wrapper_html => {:class => ''} %>
-            <%= f.input :manutencao, :required => false, :collection => ["Sim", "Não"], :label => "Manutenção de Fault", :input_html => {:class => 'span2'}, :prompt => "Selecione", :wrapper_html => {:class => ''} %>
-            <%= f.input :cobertura, :required => false, :label => "Cobertura (C)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
-            <%= f.input :mttf, :required => false, :label => "MTTF (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
-            <%= f.input :mttrc, :required => false, :label => "MTTRc (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
-            <%= f.input :deltat, :required => false, :label => "Delta t (horas)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
-            <%= f.input :periodo, :required => false, :label => "Período (anos)", :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
+          <%= simple_form_for :filtros, :url => "/marcov/home", :html => {:class => 'span2 form-horizontal filtro_relatorio'} do |f| %>
+            <%= f.input :modelo, :required => false, :collection => {"Confiabilidade R" => "Confiabilidade", "Disponibilidade A" => "Disponibilidade"}, :label => "Modelo", :include_blank => false, :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
+            <%= f.input :manutencao, :required => false, :collection => ["Não", "Sim"], :label => "Manutenção de Fault", :include_blank => false, :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
+            <%= f.input :cobertura, :required => false, :collection => ["0.8", "0.85", "0.9", "0.95"], :label => "Cobertura (C)", :include_blank => false, :input_html => {:class => 'span2'}, :wrapper_html => {:class => ''} %>
+            <%= f.input :mttf, :required => false, :label => "MTTF (horas)", :input_html => {:class => 'span2', :value => "10000"}, :wrapper_html => {:class => ''} %>
+            <%= f.input :mttrc, :required => false, :label => "MTTRc (horas)", :input_html => {:class => 'span2', :value => "0.5"}, :wrapper_html => {:class => ''} %>
+            <%= f.input :deltat, :required => false, :label => "Delta t (Conf. R(t): 0.75; Disp. A(t): 0.25)", :input_html => {:class => 'span2', :value => "0.75"}, :wrapper_html => {:class => ''} %>
+            <%= f.input :periodo, :required => false, :label => "Período máximo (anos)", :input_html => {:class => 'span2', :value => "50"}, :wrapper_html => {:class => ''} %>
+			<%= f.input :maxit, :required => false, :label => "Número máximo de iterações", :input_html => {:class => 'span2', :value => "1000000"}, :wrapper_html => {:class => ''} %>
             
             <%= f.button :submit, "Simular", :class => "btn-primary" %>
           <% end %>
         </div>
       </div>
       
-      <div class="chart span9" id="chart_div">
+      <div class="chart span6" id="chart_div">
       </div>
       <div class="span1 offset4 loading" style="display:none;">
-        <br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br>
         <%= image_tag "ajax-loader.gif" %>
       </div>
+	  <h5 class="numit span6"></h5>
     </div>
     
     
