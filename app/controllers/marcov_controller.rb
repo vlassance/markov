@@ -70,6 +70,7 @@ class MarcovController < ApplicationController
 
       i = 0
       diff = 1
+      integral = 0
       while diff > epsilon && tempo < t && i < num_it_max
         pi_novo = pi_atual * p
         @string_dados << ", [#{tempo}, #{(1 - pi_novo[0,2])}]" if (i < 100 || i % intervalo_de_plotagem == 0)
@@ -78,6 +79,7 @@ class MarcovController < ApplicationController
         else # disponibilidade
           diff = (pi_novo[0,2] - pi_atual[0,2]).to_f.abs
         end
+        integral += dt*(1 - pi_novo[0,2])
         pi_atual = pi_novo
         tempo += dt
         i += 1
@@ -85,8 +87,13 @@ class MarcovController < ApplicationController
       puts "Valor final: #{(1 - pi_novo[0,2])}"
 
       @string_dados << "]"
-      @numit = "Número de iterações: #{i}"
-      puts "num. de iterações: #{i}"
+      @infos = ""
+      if (@modelo == "Confiabilidade R(t)")
+        @infos = "MTTF: #{integral.round}h  |  "
+      end
+      @infos << "Número de iterações: #{i}"
+      
+      puts @infos
 
     end 
   end

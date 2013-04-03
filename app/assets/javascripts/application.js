@@ -20,7 +20,7 @@ $(document).ready(function(){
 
       $(".chart").toggle();
       $(".loading").toggle();
-	  $(".numit").toggle();
+	  $(".infos").toggle();
       $.ajax({
         type: 'GET',
         url: $(this).attr("action"),
@@ -28,7 +28,7 @@ $(document).ready(function(){
         success: function(data){
           $(".loading").toggle();
           $(".chart").toggle();
-		  $(".numit").toggle();
+		  $(".infos").toggle();
         },
         dataType: "script"
       });
@@ -42,7 +42,7 @@ $(document).ready(function(){
 google.load('visualization', '1.0', {'packages':['corechart']});
 
 
-function drawChartLine(title_graph, dados, colunas, id_div, numit) {
+function drawChartLine(title_graph, dados, colunas, id_div, infos) {
 
   // Create the data table.
   var data = new google.visualization.DataTable();
@@ -66,7 +66,7 @@ function drawChartLine(title_graph, dados, colunas, id_div, numit) {
   // Instantiate and draw our chart, passing in some options.
   var chart = new google.visualization.LineChart(document.getElementById(id_div));
   chart.draw(data, options);
-  $(".numit").text(numit);
+  $(".infos").text(infos);
 }
 
 function drawChartPie(slice_name_label, slice_value_label, dados, chart_div) {
